@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html ng-app="app">
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+
+    <ng-view></ng-view>
+
+    <!-- Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-resource.min.js"></script>
+
+    <!-- Template -->
+    <script type="text/ng-template" id="/sensehat.html">
+      Search: <input type="text" ng-model="search.name">
+      <ul>
+        <li ng-repeat="sensor in sensors | filter: search">
+          <input type="checkbox" ng-model="sensor.completed" ng-change="update($index)">
+          <a ng-show="!editing[$index]" href="/sensehat/{{sensor.sensor}}">{{sensor.sensor}}</a>
+          <button ng-show="!editing[$index]" ng-click="edit($index)">edit</button>
+
+          <input ng-show="editing[$index]" type="text" ng-model="sensor.name">
+          <button ng-show="editing[$index]" ng-click="update($index)">Update</button>
+          <button ng-show="editing[$index]" ng-click="cancel($index)">Cancel</button>
+          <button ng-show="!editing[$index]" ng-click="remove($index)">remove</button>
+        </li>
+      </ul>
+      New task <input type="text" ng-model="newSensor"><button ng-click="save()">Create</button>
+    </script>
+
+    <script type="text/ng-template" id="/sensorDetails.html">
+      <h1>{{ sensor.name }}</h1>
+      completed: <input type="checkbox" ng-model="sensor.completed"><br>
+      note: <textarea ng-model="sensor.note"></textarea><br><br>
+
+      <button ng-click="update()">Update</button>
+      <button ng-click="remove()">Remove</button>
+      <a href="/">Cancel</a>
+    </script>
+
+
+    <script>
+      angular.module('app', ['ngRoute', 'ngResource'])
+
+        //---------------
+        // Services
+        //---------------
+
+        .factory('Sensors', ['$resource', function($resource){
+          return $resource('/sensehat/:sensor', null, {
+            'update': { method:'PUT' }
+          });
+        }])
+
+        //---------------
+        // Controllers
+        //---------------
+
+        .controller('SensehatController', ['$scope', 'Sensors', function ($scope, Sensors) {
+          $scope.editing = [];
+          $scope.sensors = Sensors.query();
+
+          $scope.save = function(){
+            if(!$scope.newSensor || $scope.newSensor.length < 1) return;
+            var sensor = new Sensors({ name: $scope.newSensor, completed: false });
+
+            sensor.$save(function(){
+              $scope.sensors.push(sensor);
+              $scope.newSensor = ''; // clear textbox
+            });
+          }
+
+          $scope.update = function(index){
+            var sensor = $scope.sensors[index];
+            Sensors.update({sensor: sensor.sensor}, sensor);
+            $scope.editing[index] = false;
+          }
+
+          $scope.edit = function(index){
+            $scope.editing[index] = angular.copy($scope.sensors[index]);
+          }
+
+          $scope.cancel = function(index){
+            $scope.sensors[index] = angular.copy($scope.editing[index]);
+            $scope.editing[index] = false;
+          }
+
+          $scope.remove = function(index){
+            var sensor = $scope.sensors[index];
+            Sensors.remove({sensor: sensor.sensor}, function(){
+              $scope.sensors.splice(index, 1);
+            });
+          }
+        }])
+
+        .controller('SensorDetailCtrl', ['$scope', '$routeParams', 'Sensors', '$location', function ($scope, $routeParams, Sensors, $location) {
+          $scope.sensor = Sensors.get({sensor: $routeParams.sensor });
+
+          $scope.remove = function(){
+            Sensors.remove({sensor: $scope.sensor.sensor}, function(){
+              $location.url('/');
+            });
+          }
+        }])
+
+        //---------------
+        // Routes
+        //---------------
+
+        .config(['$routeProvider', function ($routeProvider) {
+          $routeProvider
+            .when('/', {
+              templateUrl: '/sensehat.html',
+              controller: 'SensehatController'
+            })
+
+            .when('/:sensor', {
+              templateUrl: '/sensorDetails.html',
+              controller: 'SensorDetailCtrl'
+           });
+        }]);
+    </script>
+  </body>
+</html>
