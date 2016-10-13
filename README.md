@@ -1,6 +1,6 @@
 # Sensehat API
 
-A simple API for Sense HAT sensors using NodeJS and ExpressJS. Basically it is Rest API to expose and save data of the sensors.(MongoDB as a database)
+A simple API for Sense HAT sensors using NodeJS and ExpressJS. Basically it is a Rest API to expose and save data of the sensors.(MongoDB as a database)
 Sense Hat on Raspberry Pi can POST to this dashboard for saving data on Mongo or directly save data on Mongo.
 
 With the API which has been exposed, it is possible to build web dashboard or mobile app or anything to consume the API.
