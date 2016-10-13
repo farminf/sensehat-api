@@ -1,6 +1,6 @@
 {
-  "name": "sensehat-dashboard",
-  "description": "An example module to illustrate the usage of a package.json",
+  "name": "sensehat-api",
+  "description": "node js app to save and expose sense hat data",
   "author": "IoT guy <iotdemos2016@gmail.com>",
   "version": "0.0.1",
   "private": true,
@@ -8,6 +8,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "bower": "^1.7.9",
     "body-parser": "~1.15.1",
     "cookie-parser": "~1.4.3",
     "debug": "~2.2.0",
