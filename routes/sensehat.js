@@ -21,6 +21,14 @@ router.post('/', function(req, res, next) {
 
 /* GET /sensehat/sensor_name */
 router.get('/:sensor', function(req, res, next) {
+  Sensehat.findOne({"sensor" : req.params.sensor}, {}, { sort: { 'timestamp' : -1 } }, function (err, post) {
+    if (err) return next(err);
+    res.json(post);
+  });
+});
+
+/* GET /sensehat/sensor_name/historic */
+router.get('/:sensor/historic', function(req, res, next) {
   Sensehat.find({"sensor" : req.params.sensor}, function (err, post) {
     if (err) return next(err);
     res.json(post);
