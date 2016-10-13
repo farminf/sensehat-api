@@ -35,12 +35,20 @@ router.get('/:sensor', function(req, res, next) {
 //   });
 // });
 
-// /* DELETE /todos/:id */
-// router.delete('/:id', function(req, res, next) {
-//   Sensehat.findByIdAndRemove(req.params.id, req.body, function (err, post) {
-//     if (err) return next(err);
-//     res.json(post);
-//   });
-// });
+/* DELETE ALL /sensehat/deleteall */
+router.delete('/deleteall', function(req, res, next) {
+  Sensehat.remove({ }, function (err, post) {
+    if (err) return next(err);
+    res.json(post);
+  });
+});
+
+/* DELETE an Item /sensehat/:id */
+router.delete('/:id', function(req, res, next) {
+  Sensehat.findByIdAndRemove(req.params.id, req.body, function (err, post) {
+    if (err) return next(err);
+    res.json(post);
+  });
+});
 
 module.exports = router;
