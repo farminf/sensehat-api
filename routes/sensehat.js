@@ -5,8 +5,12 @@ var Sensehat = require('../models/Sensehat.js');
 
 /* GET /sensehat listing. */
 router.get('/', function(req, res, next) {
-  Sensehat.find(function (err, sensehat) {
+  Sensehat.find().distinct('sensor', function(err, sensehat){
+  //Sensehat.find({},'sensor',function (err, sensehat) {
     if (err) return next(err);
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Headers', '*');
+    res.header('Access-Control-Allow-Origin', '*');
     res.json(sensehat);
   });
 });
@@ -15,6 +19,9 @@ router.get('/', function(req, res, next) {
 router.post('/', function(req, res, next) {
   Sensehat.create(req.body, function (err, post) {
     if (err) return next(err);
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Headers', '*');
+    res.header('Access-Control-Allow-Origin', '*');
     res.json(post);
   });
 });
@@ -23,14 +30,18 @@ router.post('/', function(req, res, next) {
 router.get('/:sensor', function(req, res, next) {
   Sensehat.findOne({"sensor" : req.params.sensor}, {}, { sort: { 'timestamp' : -1 } }, function (err, post) {
     if (err) return next(err);
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Headers', '*');
+    res.header('Access-Control-Allow-Origin', '*');
     res.json(post);
   });
 });
 
 /* GET /sensehat/sensor_name/historic */
 router.get('/:sensor/historic', function(req, res, next) {
-  Sensehat.find({"sensor" : req.params.sensor}, function (err, post) {
+  Sensehat.find({"sensor" : req.params.sensor}, {}, { sort: { 'timestamp' : -1 } , limit : 300}, function (err, post) {
     if (err) return next(err);
+    res.header('Access-Control-Allow-Origin', '*');
     res.json(post);
   });
 });

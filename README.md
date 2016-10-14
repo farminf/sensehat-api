@@ -30,7 +30,7 @@ npm start
 POST /sensehat
 ```
 
-- For getting all sensors data
+- For getting all sensors names
 ```
 GET /sensehat
 ```
@@ -40,7 +40,7 @@ GET /sensehat
 GET /sensor/$sensor_name
 ```
 
-- For getting all values of one sensor
+- For getting last 300 values of one sensor
 ```
 GET /sensor/$sensor_name/historic
 ```
